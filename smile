@@ -1,0 +1,48 @@
+# Problem Set 6
+# Name: Tessa Evers (#10550062)
+# Time: 22:00
+# smile: This script checks if the given word is found in a list of positive or negative words.
+# If not found in one of them it is assumed to be neutral. Based on the positive, negative
+# or neutral feeling a propiate smile is printed in the right color.
+#
+#!/usr/bin/env python3
+#
+# For running scripts the following key information is necessary
+# export API_KEY=dGCFovgkdd8V4CE3gO5TmJfbf
+# export API_SECRET=aBCodOi25Z19ERdkFx4Y2WF5OI4ERbCzjG5KB7dAM4gd8BXBqQ
+
+# The following functions or librarys are necessary to run the script.
+import os
+import sys
+
+from analyzer import Analyzer
+from termcolor import colored
+
+def main():
+
+    # Ensure proper usage.
+    if len(sys.argv) != 2:
+        sys.exit("Usage: ./smile word")
+
+    # Transform the given word in lower cases.
+    word = sys.argv[1]
+    word_lower = word.lower()
+
+    # The absolute paths to lists.
+    positives = os.path.join(sys.path[0], "positive-words.txt")
+    negatives = os.path.join(sys.path[0], "negative-words.txt")
+
+    # Instantiate the analyzer.
+    analyzer = Analyzer(positives, negatives)
+
+    # Analyze the given word.
+    score = analyzer.analyze(word_lower)
+    if score > 0.0:
+        print(colored(":)", "green"))
+    elif score < 0.0:
+        print(colored(":(", "red"))
+    else:
+        print(colored(":|", "yellow"))
+
+if __name__ == "__main__":
+    main()

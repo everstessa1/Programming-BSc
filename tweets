@@ -1,0 +1,58 @@
+# Problem Set 6
+# Name: Tessa Evers (#10550062)
+# Time: 22:00
+# tweets: This file analyses the recent 50 tweets of a given twitter account to determine
+# if the user of that account most of the time posts positive, negative or neutral
+# tweets. As a result the score of every tweet and the total score will be printed.
+#
+#!/usr/bin/env python
+#
+# For running scripts the following key information is necessary
+# export API_KEY=dGCFovgkdd8V4CE3gO5TmJfbf
+# export API_SECRET=aBCodOi25Z19ERdkFx4Y2WF5OI4ERbCzjG5KB7dAM4gd8BXBqQ
+
+# The following functions or librarys are necessary to run the script.
+import os
+import sys
+import nltk
+import helpers
+
+from helpers import get_user_timeline
+from analyzer import Analyzer
+from termcolor import colored
+
+def main():
+
+    # Ensure proper usage.
+    if len(sys.argv) != 2:
+        sys.exit("Usage: ./tweets @twittername")
+
+    # Clean up given input for twittername.
+    twitter_input = sys.argv[1]
+    twitter_name = twitter_input.strip('@')
+
+    # The absolute paths to lists.
+    positives = os.path.join(sys.path[0], "positive-words.txt")
+    negatives = os.path.join(sys.path[0], "negative-words.txt")
+
+    # Instantiate the analyzer.
+    analyzer = Analyzer(positives, negatives)
+
+    # Get the twitter_name's 50 recent tweets.
+    tweets = helpers.get_user_timeline(twitter_name, 50)
+
+    # Analyze the 50 most recent tweets given a screenname.
+    total_score = 0.0
+    for tweet in tweets:
+        score = analyzer.analyze(tweet)
+        total_score += score
+        if score > 0.0:
+            print(colored("The score of {} is: {}".format(score, tweet), "green"))
+        elif score < 0.0:
+            print(colored("The score of {} is: {}".format(score, tweet), "red"))
+        else:
+            print(colored("The score of {} is: {}".format(score, tweet), "yellow"))
+    print("Total score of {} is: {}".format(twitter_input, total_score))
+
+if __name__ == "__main__":
+    main()
